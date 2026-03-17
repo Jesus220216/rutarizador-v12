@@ -2,96 +2,63 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<title>Rutarizador</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rutarizador V12</title>
 
 <style>
 body {
-    margin: 0;
-    background: linear-gradient(135deg, #0f172a, #020617);
-    color: white;
-    font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.container {
-    background: #1e293b;
-    padding: 30px;
-    border-radius: 12px;
-    width: 320px;
-    text-align: center;
-    box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+  text-align: center;
+  padding: 50px;
 }
 
 h1 {
-    margin-bottom: 10px;
-}
-
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border: none;
-    border-radius: 6px;
-    background: #0f172a;
-    color: white;
+  color: #38bdf8;
 }
 
 button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 10px;
-    background: #06b6d4;
-    border: none;
-    border-radius: 6px;
-    font-weight: bold;
-    cursor: pointer;
+  background: #22c55e;
+  border: none;
+  padding: 15px 25px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
 }
 
 button:hover {
-    background: #0891b2;
+  background: #16a34a;
 }
 </style>
-</head>
 
+</head>
 <body>
 
-<div class="container">
-    <h1>RUTARIZADOR V12</h1>
-    <p>Login</p>
+<h1>🚀 Enrutador Web</h1>
+<p>Firebase conectado correctamente</p>
 
-    <input id="user" placeholder="Usuario">
-    <input id="pass" type="password" placeholder="Contraseña">
-    <input id="key" placeholder="KEY">
+<button onclick="alert('Funciona 🔥')">Probar</button>
 
-    <button onclick="login()">Entrar</button>
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
-<script>
-async function login() {
-    const user = document.getElementById("user").value;
-    const pass = document.getElementById("pass").value;
-    const key = document.getElementById("key").value;
+const firebaseConfig = {
+  apiKey: "AIzaSyD1w_6GSTxqf5iMVneB8DgLnpFwS8RGy3g",
+  authDomain: "rutarizador-v12.firebaseapp.com",
+  projectId: "rutarizador-v12",
+  storageBucket: "rutarizador-v12.firebasestorage.app",
+  messagingSenderId: "928870753252",
+  appId: "1:928870753252:web:f57cb32567e1a1138b1df1",
+  measurementId: "G-GWWX1TMDS8"
+};
 
-    try {
-        const res = await fetch("https://TU-BACKEND.com/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ user, pass, key })
-        });
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
-        const data = await res.json();
-        alert(data.message || "Respuesta recibida");
-
-    } catch (error) {
-        alert("Error de conexión con el servidor");
-    }
-}
+console.log("🔥 Firebase conectado");
 </script>
 
 </body>
