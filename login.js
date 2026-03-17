@@ -1,22 +1,28 @@
-export default function handler(req, res) {
+async function login() {
+  const user = document.querySelector("#user").value;
+  const pass = document.querySelector("#pass").value;
+  const key = document.querySelector("#key").value;
 
-    if (req.method !== "POST") {
-        return res.status(405).json({ message: "Método no permitido" });
-    }
-
-    const { user, pass, key } = req.body;
-
-    // Usuario de prueba
-    if (user === "admin" && pass === "1234" && key === "abc") {
-        return res.status(200).json({
-            success: true,
-            token: "token123",
-            message: "Login exitoso"
-        });
-    }
-
-    return res.status(401).json({
-        success: false,
-        message: "Datos incorrectos"
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ user, pass, key })
     });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("Login correcto");
+      window.location.href = "/dashboard";
+    } else {
+      alert(data.message);
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Error de conexión con el servidor");
+  }
 }
