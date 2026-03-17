@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Panel</title>
+
+<style>
+body{
+    background:#020617;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+    padding:50px;
+}
+.card{
+    background:#1e293b;
+    padding:30px;
+    border-radius:10px;
+}
+button{
+    padding:10px 20px;
+    margin-top:20px;
+    border:none;
+    background:#06b6d4;
+    border-radius:6px;
+    cursor:pointer;
+}
+</style>
+
+</head>
+<body>
+
+<div class="card">
+    <h1>🚀 Bienvenido</h1>
+    <p>Acceso correcto</p>
+
+    <button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<script>
+const token = localStorage.getItem("token");
+
+if(!token){
+    window.location.href = "index.html";
+}
+
+function logout(){
+    localStorage.removeItem("token");
+    window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
