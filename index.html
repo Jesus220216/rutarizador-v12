@@ -1,62 +1,39 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Rutarizador</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background: #0f172a;
-  color: white;
-  text-align: center;
-  padding: 50px;
-}
-
-h1 {
-  color: #38bdf8;
-}
-
-button {
-  background: #22c55e;
-  border: none;
-  padding: 15px 25px;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 8px;
-}
-
-button:hover {
-  background: #16a34a;
-}
-</style>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rutarizador v12</title>
 </head>
+
 <body>
 
-<h1>🚀 Enrutador Web</h1>
-<p>Firebase conectado correctamente</p>
+  <h1>🚀 Rutarizador v12</h1>
+  <p>Sistema de licencias y pagos automático</p>
 
-<button onclick="alert('Funciona 🔥')">Probar</button>
+  <!-- 🔥 FIREBASE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+    const firebaseConfig = {
+      apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
+      authDomain: "rutarizador-v12.firebaseapp.com",
+      projectId: "rutarizador-v12",
+      storageBucket: "rutarizador-v12.firebasestorage.app",
+      messagingSenderId: "928870753252",
+      appId: "1:928870753252:web:f57cb32567e1a1138b1df1",
+      measurementId: "G-GWWX1TMDS8"
+    };
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD1w_6GSTxqf5iMVneB8DgLnpFwS8RGy3g",
-  authDomain: "rutarizador-v12.firebaseapp.com",
-  projectId: "rutarizador-v12",
-  storageBucket: "rutarizador-v12.firebasestorage.app",
-  messagingSenderId: "928870753252",
-  appId: "1:928870753252:web:f57cb32567e1a1138b1df1",
-  measurementId: "G-GWWX1TMDS8"
-};
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
 
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+    console.log("🔥 Firebase conectado correctamente");
+  </script>
+
+</body>
+</html>
 
 console.log("🔥 Firebase conectado");
 </script>
