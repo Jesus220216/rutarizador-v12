@@ -1,114 +1,73 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Rotarizador V12</title>
+<title>Dashboard V12</title>
 
 <style>
 body{
   background:#020617;
-  color:white;
-  font-family:Arial;
+  color:#00ffcc;
+  font-family:Consolas;
   text-align:center;
   padding:40px;
 }
 
-h1{
-  font-size:40px;
-  margin-bottom:5px;
-}
-
-.sub{
-  color:#60a5fa;
-  margin-bottom:20px;
-  border-bottom:3px solid #3b82f6;
-  display:inline-block;
-  padding-bottom:5px;
-}
-
-.card{
-  background:#0f172a;
+.box{
+  border:1px solid #00ffff;
   padding:30px;
-  border-radius:15px;
-  width:320px;
+  width:400px;
   margin:auto;
-  box-shadow:0 0 20px rgba(0,0,0,0.5);
-}
-
-.logo{
-  width:100px;
-  height:100px;
-  border-radius:50%;
-  margin-bottom:15px;
-}
-
-input{
-  width:100%;
-  padding:12px;
-  margin-top:10px;
-  border-radius:8px;
-  border:1px solid #3b82f6;
-  background:#020617;
-  color:white;
+  border-radius:15px;
+  box-shadow:0 0 20px #00ffff;
 }
 
 button{
   width:100%;
   padding:12px;
   margin-top:15px;
-  background:#3b82f6;
+  background:#00ffff;
   border:none;
-  border-radius:8px;
-  color:white;
   font-weight:bold;
   cursor:pointer;
 }
 
 button:hover{
-  background:#2563eb;
+  background:#00ffcc;
 }
 </style>
 </head>
 
 <body>
 
-<h1>RUTARIZADOR V12</h1>
-<div class="sub">Bienvenido</div>
+<h1>🚀 PANEL V12</h1>
 
-<div class="card">
+<div class="box">
+  <h3>Bienvenido al sistema</h3>
 
-<img src="logo.jpg" class="logo">
+  <p>Acceso autorizado ✅</p>
 
-<h2>Login</h2>
-
-<input type="text" id="user" placeholder="Usuario">
-<input type="password" id="pass" placeholder="Contraseña">
-<input type="text" id="key" placeholder="KEY">
-
-<button onclick="login()">Login</button>
-
-<p id="estado"></p>
-
+  <button onclick="irAdmin()">Ir a Admin</button>
+  <button onclick="logout()">Cerrar sesión</button>
 </div>
 
 <script>
-// 🔐 LOGIN SIMPLE (TU ESTILO)
-function login(){
-  const user = document.getElementById("user").value;
-  const pass = document.getElementById("pass").value;
-  const key  = document.getElementById("key").value;
 
-  if(user === "admin" && pass === "1234" && key === "V12"){
-    localStorage.setItem("auth","true");
-    window.location.href = "admin.html";
-  }else{
-    document.getElementById("estado").innerText = "❌ Acceso denegado";
-  }
+// 🔐 PROTEGER ACCESO
+if(localStorage.getItem("auth") !== "true"){
+    window.location.href = "index.html";
 }
-</script>
 
-</body>
-</html>
+// 🔗 IR AL ADMIN
+function irAdmin(){
+  window.location.href = "admin.html";
+}
+
+// 🚪 LOGOUT
+function logout(){
+  localStorage.removeItem("auth");
+  window.location.href = "index.html";
+}
 
 </script>
 
