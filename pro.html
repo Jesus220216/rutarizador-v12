@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>PRO V12</title>
+
+<style>
+body{
+  background:#020617;
+  color:#00ffcc;
+  font-family:Consolas;
+  text-align:center;
+  padding:40px;
+}
+.box{
+  border:1px solid #00ffff;
+  padding:30px;
+  width:400px;
+  margin:auto;
+  border-radius:15px;
+  box-shadow:0 0 20px #00ffff;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🟢 MODO PRO ACTIVADO</h1>
+
+<div class="box">
+  <h3>Funciones Premium</h3>
+
+  <p>✔ Acceso total</p>
+  <p>✔ Sin restricciones</p>
+  <p>✔ Sistema avanzado</p>
+
+  <button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
+  authDomain: "rutarizador-v12.firebaseapp.com",
+  projectId: "rutarizador-v12",
+  storageBucket: "rutarizador-v12.firebasestorage.app",
+  messagingSenderId: "928870753252",
+  appId: "1:928870753252:web:f57cb32567e1a1138b1df1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth,(user)=>{
+  if(!user){
+    window.location.href = "index.html";
+  }
+});
+
+window.logout = ()=> signOut(auth);
+</script>
+
+</body>
+</html>
