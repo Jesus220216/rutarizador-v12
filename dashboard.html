@@ -2,249 +2,113 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Panel Hacker V12</title>
+<title>Rotarizador V12</title>
 
 <style>
 body{
-    background:black;
-    color:#00ffcc;
-    font-family:Consolas;
-    text-align:center;
-    overflow:hidden;
+  background:#020617;
+  color:white;
+  font-family:Arial;
+  text-align:center;
+  padding:40px;
 }
 
-/* MATRIX */
-canvas{
-    position:fixed;
-    top:0;
-    left:0;
-    z-index:-1;
+h1{
+  font-size:40px;
+  margin-bottom:5px;
 }
 
-/* PANEL */
-.container{
-    margin-top:40px;
+.sub{
+  color:#60a5fa;
+  margin-bottom:20px;
+  border-bottom:3px solid #3b82f6;
+  display:inline-block;
+  padding-bottom:5px;
 }
 
-.box{
-    border:1px solid #00ffff;
-    padding:20px;
-    border-radius:15px;
-    width:320px;
-    margin:10px;
-    display:inline-block;
-    vertical-align:top;
-    background:rgba(0,0,0,0.8);
-    box-shadow:0 0 20px #00ffff;
+.card{
+  background:#0f172a;
+  padding:30px;
+  border-radius:15px;
+  width:320px;
+  margin:auto;
+  box-shadow:0 0 20px rgba(0,0,0,0.5);
 }
 
-.terminal{
-    height:150px;
-    overflow-y:auto;
-    background:black;
-    padding:10px;
-    text-align:left;
-    font-size:12px;
+.logo{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+  margin-bottom:15px;
+}
+
+input{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:1px solid #3b82f6;
+  background:#020617;
+  color:white;
 }
 
 button{
-    width:100%;
-    padding:10px;
-    margin-top:10px;
-    background:#00ffff;
-    border:none;
-    cursor:pointer;
-    font-weight:bold;
+  width:100%;
+  padding:12px;
+  margin-top:15px;
+  background:#3b82f6;
+  border:none;
+  border-radius:8px;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
 }
 
 button:hover{
-    background:#00ffcc;
-}
-
-.logout{
-    background:red;
-    color:white;
+  background:#2563eb;
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="matrix"></canvas>
+<h1>RUTARIZADOR V12</h1>
+<div class="sub">Bienvenido</div>
 
-<h1>⚡ PANEL HACKER V12 ⚡</h1>
+<div class="card">
 
-<div class="container">
+<img src="logo.jpg" class="logo">
 
-<div class="box">
-<h3>Terminal</h3>
-<div id="terminal" class="terminal"></div>
-<button onclick="iniciarHack()">INICIAR ATAQUE</button>
-</div>
+<h2>Login</h2>
 
-<div class="box">
-<h3>Resultado</h3>
-<p id="numero">----</p>
-<p id="fecha">--/--</p>
-<p id="estado">---</p>
-</div>
+<input type="text" id="user" placeholder="Usuario">
+<input type="password" id="pass" placeholder="Contraseña">
+<input type="text" id="key" placeholder="KEY">
 
-<div class="box">
-<h3>Historial</h3>
-<ul id="historial"></ul>
-</div>
+<button onclick="login()">Login</button>
+
+<p id="estado"></p>
 
 </div>
-
-<button class="logout" onclick="logout()">Cerrar sesión</button>
-
-<audio id="beep" src="https://www.soundjay.com/button/beep-07.wav"></audio>
 
 <script>
+// 🔐 LOGIN SIMPLE (TU ESTILO)
+function login(){
+  const user = document.getElementById("user").value;
+  const pass = document.getElementById("pass").value;
+  const key  = document.getElementById("key").value;
 
-// 🔐 PROTECCIÓN
-if(localStorage.getItem("auth") !== "true"){
-    window.location.href = "index.html";
+  if(user === "admin" && pass === "1234" && key === "V12"){
+    localStorage.setItem("auth","true");
+    window.location.href = "admin.html";
+  }else{
+    document.getElementById("estado").innerText = "❌ Acceso denegado";
+  }
 }
+</script>
 
-const terminal = document.getElementById("terminal");
-const historial = document.getElementById("historial");
-const beep = document.getElementById("beep");
-
-// 🔊 sonido
-function sound(){
-    beep.currentTime = 0;
-    beep.play();
-}
-
-// LOG
-function log(texto){
-    const p = document.createElement("p");
-    p.textContent = "> " + texto;
-    terminal.appendChild(p);
-    terminal.scrollTop = terminal.scrollHeight;
-    sound();
-}
-
-// FAKE
-function generarFake(){
-    let grupos = [];
-    for(let i=0;i<4;i++){
-        let bloque="";
-        for(let j=0;j<4;j++){
-            bloque += Math.floor(Math.random()*10);
-        }
-        grupos.push(bloque);
-    }
-    return grupos.join(" ");
-}
-
-// ATAQUE
-function iniciarHack(){
-    terminal.innerHTML="";
-
-    let pasos = [
-        "Conectando...",
-        "Bypassing firewall...",
-        "Inyectando payload...",
-        "Accediendo nodo...",
-        "Generando datos..."
-    ];
-
-    let i=0;
-
-    function run(){
-        if(i<pasos.length){
-            log(pasos[i]);
-            i++;
-            setTimeout(run,300);
-        }else{
-            resultado();
-        }
-    }
-
-    run();
-}
-
-// RESULTADO
-function resultado(){
-    let num = generarFake();
-
-    let mes = String(Math.floor(Math.random()*12)+1).padStart(2,"0");
-    let año = Math.floor(Math.random()*5)+25;
-
-    document.getElementById("numero").textContent = num;
-    document.getElementById("fecha").textContent = mes+"/"+año;
-    document.getElementById("estado").textContent = "⚠ DEMO";
-
-    let item = document.createElement("li");
-    item.textContent = num;
-    historial.prepend(item);
-
-    guardarHistorial();
-}
-
-// 💾 GUARDAR HISTORIAL
-function guardarHistorial(){
-    let lista = [];
-    document.querySelectorAll("#historial li").forEach(li=>{
-        lista.push(li.textContent);
-    });
-    localStorage.setItem("historial", JSON.stringify(lista));
-}
-
-// 🔄 CARGAR HISTORIAL
-function cargarHistorial(){
-    let data = JSON.parse(localStorage.getItem("historial")) || [];
-    data.forEach(item=>{
-        let li = document.createElement("li");
-        li.textContent = item;
-        historial.appendChild(li);
-    });
-}
-cargarHistorial();
-
-// LOGOUT
-function logout(){
-    localStorage.removeItem("auth");
-    window.location.href="index.html";
-}
-
-// 🌧 MATRIX
-const canvas = document.getElementById("matrix");
-const ctx = canvas.getContext("2d");
-
-canvas.height = window.innerHeight;
-canvas.width = window.innerWidth;
-
-let letters = "01";
-letters = letters.split("");
-
-let fontSize = 14;
-let columns = canvas.width/fontSize;
-
-let drops = [];
-for(let x=0;x<columns;x++) drops[x]=1;
-
-function draw(){
-    ctx.fillStyle = "rgba(0,0,0,0.05)";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle = "#00ffcc";
-    ctx.font = fontSize+"px monospace";
-
-    for(let i=0;i<drops.length;i++){
-        let text = letters[Math.floor(Math.random()*letters.length)];
-        ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-
-        if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
-            drops[i]=0;
-
-        drops[i]++;
-    }
-}
-
-setInterval(draw,33);
+</body>
+</html>);
 
 </script>
 
