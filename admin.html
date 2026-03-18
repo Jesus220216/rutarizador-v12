@@ -1,0 +1,128 @@
+<!-- ===================== ADMIN PANEL SEGURO (LOGIN MANUAL) ===================== -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Admin V12 Seguro</title>
+<style>
+body{background:#020617;color:#00ffcc;font-family:Consolas;text-align:center;padding:30px}
+.box{border:1px solid #00ffff;padding:20px;border-radius:15px;width:400px;margin:auto;box-shadow:0 0 20px #00ffff}
+input{width:100%;padding:10px;margin-top:10px;background:#020617;color:#00ffcc;border:1px solid #00ffff}
+button{width:100%;padding:10px;margin-top:10px;background:#00ffff;border:none;font-weight:bold;cursor:pointer}
+button:hover{background:#00ffcc}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<h1>👑 PANEL ADMIN V12</h1>
+
+<!-- LOGIN -->
+<div class="box" id="loginBox">
+<h3>Login Admin</h3>
+<input type="email" id="email" placeholder="Correo admin">
+<input type="password" id="password" placeholder="Contraseña">
+<button onclick="loginAdmin()">INICIAR SESIÓN</button>
+<p id="loginEstado"></p>
+</div>
+
+<!-- PANEL -->
+<div class="box hidden" id="panelBox">
+<h3>UID del usuario</h3>
+<input type="text" id="uid" placeholder="UID del usuario">
+
+<button onclick="hacerPro()">ACTIVAR PRO</button>
+<button onclick="quitarPro()">QUITAR PRO</button>
+
+<p id="estado"></p>
+<button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.10.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
+  authDomain: "rutarizador-v12.firebaseapp.com",
+  projectId: "rutarizador-v12",
+  storageBucket: "rutarizador-v12.firebasestorage.app",
+  messagingSenderId: "928870753252",
+  appId: "1:928870753252:web:f57cb32567e1a1138b1df1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// 🔐 LOGIN MANUAL
+window.loginAdmin = async ()=>{
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try{
+    await signInWithEmailAndPassword(auth,email,password);
+  }catch(e){
+    document.getElementById("loginEstado").innerText = "❌ " + e.message;
+  }
+}
+
+// 🔒 CONTROL DE SESIÓN
+onAuthStateChanged(auth,(user)=>{
+  if(user){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("panelBox").classList.remove("hidden");
+  }else{
+    document.getElementById("loginBox").classList.remove("hidden");
+    document.getElementById("panelBox").classList.add("hidden");
+  }
+});
+
+// ✅ HACER PRO
+window.hacerPro = async ()=>{
+  let uid = document.getElementById("uid").value;
+
+  if(!uid){
+    alert("Pon UID");
+    return;
+  }
+
+  try{
+    await setDoc(doc(db,"usuarios",uid),{
+      pro:true
+    },{merge:true});
+
+    document.getElementById("estado").innerText = "Usuario ahora es PRO ✅";
+  }catch(e){
+    alert("Error: " + e.message);
+  }
+}
+
+// ❌ QUITAR PRO
+window.quitarPro = async ()=>{
+  let uid = document.getElementById("uid").value;
+
+  if(!uid){
+    alert("Pon UID");
+    return;
+  }
+
+  try{
+    await setDoc(doc(db,"usuarios",uid),{
+      pro:false
+    },{merge:true});
+
+    document.getElementById("estado").innerText = "Usuario ahora es FREE ❌";
+  }catch(e){
+    alert("Error: " + e.message);
+  }
+}
+
+// 🚪 LOGOUT
+window.logout = ()=> signOut(auth);
+
+</script>
+
+</body>
+</html>
