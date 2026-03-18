@@ -7,48 +7,54 @@
 <style>
 body{
     background:#020617;
-    color:white;
-    font-family:Arial;
+    color:#00ffcc;
+    font-family:Consolas, monospace;
     text-align:center;
     padding:50px;
 }
+
 .card{
-    background:#1e293b;
+    background:#020617;
     padding:30px;
-    border-radius:10px;
+    border-radius:15px;
+    border:1px solid #00ffff;
+    box-shadow:0 0 20px #00ffff;
 }
+
 button{
     padding:10px 20px;
     margin-top:20px;
     border:none;
-    background:#06b6d4;
-    border-radius:6px;
+    border-radius:10px;
+    background:#00ffff;
     cursor:pointer;
 }
-</style>
 
+button:hover{
+    box-shadow:0 0 20px #00ffff;
+}
+</style>
 </head>
+
 <body>
 
-<div class="card">
-    <h1>🚀 Bienvenido</h1>
-    <p>Acceso correcto</p>
-
-    <button onclick="logout()">Cerrar sesión</button>
-</div>
-
 <script>
-const token = localStorage.getItem("token");
-
-if(!token){
+if (localStorage.getItem("auth") !== "true") {
     window.location.href = "index.html";
 }
 
 function logout(){
-    localStorage.removeItem("token");
+    localStorage.removeItem("auth");
     window.location.href = "index.html";
 }
 </script>
+
+<div class="card">
+    <h1>✔ ACCESO AUTORIZADO</h1>
+    <p>Bienvenido al sistema</p>
+
+    <button onclick="logout()">Cerrar sesión</button>
+</div>
 
 </body>
 </html>
