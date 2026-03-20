@@ -2,72 +2,105 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Dashboard V12</title>
+<title>Dashboard</title>
 
 <style>
 body{
-  background:#020617;
-  color:#00ffcc;
-  font-family:Consolas;
-  text-align:center;
-  padding:40px;
+    background:#020617;
+    color:#00ffcc;
+    font-family:Consolas;
+    text-align:center;
+    padding:40px;
 }
 
-.box{
-  border:1px solid #00ffff;
-  padding:30px;
-  width:400px;
-  margin:auto;
-  border-radius:15px;
-  box-shadow:0 0 20px #00ffff;
+.card{
+    background:#020617;
+    padding:25px;
+    border-radius:15px;
+    width:350px;
+    margin:auto;
+    border:1px solid #00ffff;
+    box-shadow:0 0 20px #00ffff;
 }
 
 button{
-  width:100%;
-  padding:12px;
-  margin-top:15px;
-  background:#00ffff;
-  border:none;
-  font-weight:bold;
-  cursor:pointer;
+    width:100%;
+    padding:15px;
+    margin-top:15px;
+    border:none;
+    border-radius:10px;
+    background:#00ffff;
+    color:black;
+    font-weight:bold;
+    cursor:pointer;
 }
 
 button:hover{
-  background:#00ffcc;
+    background:#00ffcc;
+}
+
+.saldo{
+    font-size:28px;
+    margin:20px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🚀 PANEL V12</h1>
+<h1>💰 Panel de usuario</h1>
 
-<div class="box">
-  <h3>Bienvenido al sistema</h3>
+<div class="card">
 
-  <p>Acceso autorizado ✅</p>
+    <div class="saldo">
+        Saldo: $<span id="money">0.00</span>
+    </div>
 
-  <button onclick="irAdmin()">Ir a Admin</button>
-  <button onclick="logout()">Cerrar sesión</button>
+    <button onclick="verAnuncio()">📺 Ver anuncio (+$0.10)</button>
+
+    <button onclick="jugar()">🎮 Jugar (+$0.20)</button>
+
+    <button onclick="logout()">🚪 Cerrar sesión</button>
+
 </div>
 
 <script>
+// cargar saldo
+let saldo = localStorage.getItem("saldo") || 0;
+document.getElementById("money").innerText = parseFloat(saldo).toFixed(2);
 
-// 🔐 PROTEGER ACCESO
-if(localStorage.getItem("auth") !== "true"){
+// 💰 sumar dinero
+function reward(cantidad){
+    saldo = parseFloat(saldo) + cantidad;
+    localStorage.setItem("saldo", saldo);
+    document.getElementById("money").innerText = saldo.toFixed(2);
+}
+
+// 📺 anuncio
+function verAnuncio(){
+    window.open("https://omg10.com/4/10751693", "_blank"); // tu link monetag
+    reward(0.10);
+}
+
+// 🎮 juego
+function jugar(){
+    reward(0.20);
+}
+
+// logout
+function logout(){
+    localStorage.removeItem("auth");
     window.location.href = "index.html";
 }
 
-// 🔗 IR AL ADMIN
-function irAdmin(){
-  window.location.href = "admin.html";
+// protección
+if(localStorage.getItem("auth") !== "true"){
+    window.location.href = "index.html";
 }
+</script>
 
-// 🚪 LOGOUT
-function logout(){
-  localStorage.removeItem("auth");
-  window.location.href = "index.html";
-}
+</body>
+</html>
 
 </script>
 
