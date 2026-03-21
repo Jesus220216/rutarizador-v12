@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -1616,12 +1617,12 @@ function showApp() {
         }
 
         // Start
-        init();
-</script>
-<!-- 🔥 FIREBASE SCRIPT -->
-<<script type="module">
+        
+<script type="module">
+
+// 🔥 IMPORTS
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1653,26 +1654,29 @@ window.handleLogin = function () {
 
 
 // 📝 REGISTER + GUARDAR EN FIRESTORE
-window.handleRegister = async function () {
-  const email = document.getElementById("loginEmail").value;
+async function handleRegister() {
+  const username = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
+
+  const email = username + "@app.com";
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // 🔥 GUARDAR EN FIRESTORE
     await setDoc(doc(db, "users", user.uid), {
+      username: username,
       email: email,
-      createdAt: new Date(),
-      role: "user"
+      createdAt: new Date()
     });
 
     alert("✅ Usuario registrado y guardado");
+
   } catch (error) {
     alert("❌ " + error.message);
   }
-};
-
+}
 
 // 🚪 LOGOUT
 window.handleLogout = function () {
@@ -1690,7 +1694,7 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("appScreen").style.display = "none";
   }
 });
-
+init();
 </script>
 </body>
 </html>
