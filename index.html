@@ -1622,13 +1622,11 @@ window.handleRegister = async function () {
     });
 
     alert("✅ Usuario registrado");
-  catch (error) {
-  if (error.code === "auth/email-already-in-use") {
-    alert("⚠️ Este correo ya está registrado. Inicia sesión.");
-  } else {
-    alert("❌ Error: " + error.message);
+  } catch (error) {
+    console.log(error);
+    alert("❌ ERROR: " + error.message);
   }
-}
+};
 
 // 📝 REGISTER
 window.handleRegister = async function () {
@@ -1639,18 +1637,27 @@ window.handleRegister = async function () {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 🔥 Guardar usuario en Firestore
     await setDoc(doc(db, "users", user.uid), {
-      email: email,
-      createdAt: new Date()
+        username: username,
+        email: email,
+        createdAt: new Date()
     });
 
-    alert("✅ Usuario registrado");
+    alert("✅ Usuario registrado correctamente");
 
-  } catch (error) {
-    alert("❌ " + error.message);
-  }
-};
+}.catch((error) => {
+
+    if (error.code === "auth/email-already-in-use") {
+        alert("⚠️ Este correo ya está registrado. Inicia sesión.");
+    } 
+    else if (error.code === "auth/invalid-credential") {
+        alert("❌ Datos incorrectos");
+    } 
+    else {
+        alert("❌ Error: " + error.message);
+    }
+
+});
 
 
 // 🚪 LOGOUT
