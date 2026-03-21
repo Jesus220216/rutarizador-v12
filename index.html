@@ -954,21 +954,6 @@ body {
         const VALID_KEY = "PRO123";
         const REFERRAL_COMMISSION_RATE = 0.1;
 
-        // State
-        let currentUser = null;
-        let allUsers = [];
-        let transactions = [];
-        let withdrawalRequests = [];
-        let referralData = {};
-        let currentView = 'dashboard';
-        let transactionFilter = 'all';
-        let charts = {};
-
-        // Initialize
-        function init() {
-            loadData();
-            setupEventListeners();
-        }
 
         function setupEventListeners() {
             document.getElementById('loginEmail').addEventListener('keypress', e => e.key === 'Enter' && handleLogin());
@@ -1005,12 +990,7 @@ body {
         }
 
         // Auth Functions
-        function handleLogin() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const key = document.getElementById('loginKey').value;
-            const referralCode = document.getElementById('referralCodeInput').value;
-
+      
             if (key !== VALID_KEY) {
                 showNotification('❌ KEY inválida', 'error');
                 return;
@@ -1031,12 +1011,7 @@ body {
             }
         }
 
-        function handleRegister() {
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const key = document.getElementById('loginKey').value;
-            const referralCode = document.getElementById('referralCodeInput').value;
-
+        
             if (key !== VALID_KEY) {
                 showNotification('❌ KEY inválida', 'error');
                 return;
@@ -1619,8 +1594,6 @@ function showApp() {
         // Start
         
 <script type="module">
-
-// 🔥 IMPORTS
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
@@ -1631,70 +1604,61 @@ const firebaseConfig = {
   projectId: "rutarizador-v12",
   storageBucket: "rutarizador-v12.firebasestorage.app",
   messagingSenderId: "928870753252",
-  appId: "1:928870753252:web:f57cb32567e1a1138b1df1",
-  measurementId: "G-GWWX1TMDS8"
+  appId: "1:928870753252:web:f57cb32567e1a1138b1df1"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-
-// 🔐 LOGIN
 window.handleLogin = function () {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
 
   signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      console.log("Login correcto");
-    })
-    .catch(error => alert(error.message));
+    .then(() => alert("Login correcto"))
+    .catch(e => alert(e.message));
 };
 
-
-// 📝 REGISTER + GUARDAR EN FIRESTORE
-async function handleRegister() {
-  const username = document.getElementById("loginEmail").value;
+window.handleRegister = async function () {
+  const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
-
-  const email = username + "@app.com";
 
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // 🔥 GUARDAR EN FIRESTORE
     await setDoc(doc(db, "users", user.uid), {
-      username: username,
       email: email,
       createdAt: new Date()
     });
 
-    alert("✅ Usuario registrado y guardado");
-
-  } catch (error) {
-    alert("❌ " + error.message);
+    alert("Usuario creado");
+  } catch (e) {
+    alert(e.message);
   }
-}
+};
 
-// 🚪 LOGOUT
 window.handleLogout = function () {
   signOut(auth);
 };
 
-
-// 🔄 SESIÓN AUTOMÁTICA
 onAuthStateChanged(auth, (user) => {
   if (user) {
     document.getElementById("loginScreen").style.display = "none";
-    document.getElementById("appScreen").style.display = "flex";
+    document.getElementById("appScreen").style.display = "block";
+    document.querySelector(".dashboard").style.display = "block";
+
+    document.getElementById("userEmail").textContent = user.email;
+    document.getElementById("userId").textContent = user.uid;
+
   } else {
     document.getElementById("loginScreen").style.display = "flex";
     document.getElementById("appScreen").style.display = "none";
   }
 });
-init();
+
 </script>
+
 </body>
 </html>
