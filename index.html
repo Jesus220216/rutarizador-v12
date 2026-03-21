@@ -1618,21 +1618,11 @@ function showApp() {
         // Start
         init();
 </script>
-
-<script src="http://localhost:3000/socket.io/socket.io.js"></script>
-<script>
-  const socket = io("http://localhost:3000");
-
-  socket.on("notification", (data) => {
-    showNotification(data.message);
-  });
-</script>
 <!-- 🔥 FIREBASE SCRIPT -->
-<script type="module">
-
+<<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
@@ -1645,50 +1635,62 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-// LOGIN
-window.handleLogin = function() {
-    const email = document.getElementById("loginEmail").value;
-    const password = document.getElementById("loginPassword").value;
 
-    // Mostrar loader
-    document.getElementById('loaderScreen').style.display = 'flex';
-    document.getElementById('loginScreen').style.display = 'none';
+// 🔐 LOGIN
+window.handleLogin = function () {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
 
-    signInWithEmailAndPassword(auth, email, password)
+  signInWithEmailAndPassword(auth, email, password)
     .then(() => {
-        // NO hagas nada aquí ❌
-        // Firebase se encarga con onAuthStateChanged
+      console.log("Login correcto");
     })
-    .catch((error) => {
-        document.getElementById('loaderScreen').style.display = 'none';
-        document.getElementById('loginScreen').style.display = 'flex';
-        alert("❌ " + error.message);
-    });
-};// SESIÓN
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        // Usuario logueado
-        document.getElementById('loaderScreen').style.display = 'none';
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('appScreen').style.display = 'flex';
-    } else {
-        // Usuario NO logueado
-        document.getElementById('loaderScreen').style.display = 'none';
-        document.getElementById('loginScreen').style.display = 'flex';
-        document.getElementById('appScreen').style.display = 'none';
-    }
-});
-// LOGOUT
-window.handleLogout = function() {
-    signOut(auth).then(() => {
-        document.getElementById('loaderScreen').style.display = 'none';
-        document.getElementById('appScreen').style.display = 'none';
-        document.getElementById('loginScreen').style.display = 'flex';
-    });
+    .catch(error => alert(error.message));
 };
 
+
+// 📝 REGISTER + GUARDAR EN FIRESTORE
+window.handleRegister = async function () {
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCredential.user;
+
+    await setDoc(doc(db, "users", user.uid), {
+      email: email,
+      createdAt: new Date(),
+      role: "user"
+    });
+
+    alert("✅ Usuario registrado y guardado");
+  } catch (error) {
+    alert("❌ " + error.message);
+  }
+};
+
+
+// 🚪 LOGOUT
+window.handleLogout = function () {
+  signOut(auth);
+};
+
+
+// 🔄 SESIÓN AUTOMÁTICA
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    document.getElementById("loginScreen").style.display = "none";
+    document.getElementById("appScreen").style.display = "flex";
+  } else {
+    document.getElementById("loginScreen").style.display = "flex";
+    document.getElementById("appScreen").style.display = "none";
+  }
+});
+
+</script>
 </body>
 </html>
