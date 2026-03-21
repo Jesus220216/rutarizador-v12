@@ -1627,6 +1627,68 @@ function showApp() {
     showNotification(data.message);
   });
 </script>
+<!-- 🔥 FIREBASE SCRIPT -->
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-analytics.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
+  authDomain: "rutarizador-v12.firebaseapp.com",
+  projectId: "rutarizador-v12",
+  storageBucket: "rutarizador-v12.firebasestorage.app",
+  messagingSenderId: "928870753252",
+  appId: "1:928870753252:web:f57cb32567e1a1138b1df1",
+  measurementId: "G-GWWX1TMDS8"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const auth = getAuth(app);
+
+// LOGIN
+window.handleLogin = function() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
+
+    // Mostrar loader
+    document.getElementById('loaderScreen').style.display = 'flex';
+    document.getElementById('loginScreen').style.display = 'none';
+
+    signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
+        // NO hagas nada aquí ❌
+        // Firebase se encarga con onAuthStateChanged
+    })
+    .catch((error) => {
+        document.getElementById('loaderScreen').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        alert("❌ " + error.message);
+    });
+};// SESIÓN
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // Usuario logueado
+        document.getElementById('loaderScreen').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'flex';
+    } else {
+        // Usuario NO logueado
+        document.getElementById('loaderScreen').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+        document.getElementById('appScreen').style.display = 'none';
+    }
+});
+// LOGOUT
+window.handleLogout = function() {
+    signOut(auth).then(() => {
+        document.getElementById('loaderScreen').style.display = 'none';
+        document.getElementById('appScreen').style.display = 'none';
+        document.getElementById('loginScreen').style.display = 'flex';
+    });
+};
 
 </body>
 </html>
