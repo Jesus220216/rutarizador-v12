@@ -1622,11 +1622,13 @@ window.handleRegister = async function () {
     });
 
     alert("✅ Usuario registrado");
-  } catch (error) {
-    console.log(error);
-    alert("❌ ERROR: " + error.message);
+  catch (error) {
+  if (error.code === "auth/email-already-in-use") {
+    alert("⚠️ Este correo ya está registrado. Inicia sesión.");
+  } else {
+    alert("❌ Error: " + error.message);
   }
-};
+}
 
 // 📝 REGISTER
 window.handleRegister = async function () {
