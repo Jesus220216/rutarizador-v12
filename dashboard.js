@@ -12,10 +12,29 @@ import {
   increment
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
+// 🔥 IMPORTS EXTERNOS
+import { mostrarAnuncio } from "./ads.js";
+import { enviarPago } from "./paypal.js";
+
+// 🧠 ANTI FRAUDE
+let lastClick = 0;
+
+function puedeClick() {
+  const now = Date.now();
+
+  if (now - lastClick < 5000) {
+    alert("Espera unos segundos...");
+    return false;
+  }
+
+  lastClick = now;
+  return true;
+}
+
 let userRef;
 let cargado = false;
 
-// 🔐 CONTROL DE SESIÓN (ANTI BUG)
+// 🔐 CONTROL DE SESIÓN
 onAuthStateChanged(auth, async (user) => {
 
   if (cargado) return;
@@ -43,28 +62,60 @@ onAuthStateChanged(auth, async (user) => {
 
 });
 
-// 📺 GANAR POR ANUNCIO
+// 📺 ANUNCIO (PROTEGIDO)
 window.verAnuncio = async () => {
-  await updateDoc(userRef, {
-    earnings: increment(0.01),
-    today: increment(0.01)
-  });
-  location.reload();
-};
 
-// 🎮 MINI JUEGO
-window.miniJuego = async () => {
+  if (!puedeClick()) return;
+
+  mostrarAnuncio();
+
   await updateDoc(userRef, {
     earnings: increment(0.02),
     today: increment(0.02)
   });
+
+};
+
+// 🎮 MINI JUEGO
+window.miniJuego = async () => {
+
+  if (!puedeClick()) return;
+
+  await updateDoc(userRef, {
+    earnings: increment(0.02),
+    today: increment(0.02)
+  });
+
   alert("Ganaste $0.02 🎉");
-  location.reload();
 };
 
 // 💳 RETIRO
-window.retirar = () => {
-  alert("Retiro solicitado (demo)");
+window.retirar = async () => {
+
+  const email = document.getElementById("paypal").value;
+
+  if (!email) {
+    alert("Ingresa PayPal");
+    return;
+  }
+
+  const snap = await getDoc(userRef);
+  const data = snap.data();
+
+  if (data.earnings < 1) {
+    alert("Mínimo $1");
+    return;
+  }
+
+  alert("Procesando pago...");
+
+  await enviarPago(email, data.earnings);
+
+  await updateDoc(userRef, {
+    earnings: 0
+  });
+
+  alert("Pago enviado 💸");
 };
 
 // 📋 COPIAR REFERIDO
@@ -78,7 +129,7 @@ window.copyMyRef = () => {
   alert("Link copiado 🚀");
 };
 
-// 🚪 LOGOUT (FUNCIONANDO)
+// 🚪 LOGOUT
 window.logout = async () => {
   try {
     await signOut(auth);
