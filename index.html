@@ -1670,15 +1670,16 @@ async function handleRegister() {
 
 
 // 🚪 LOGOUT
-window.handleLogin = function () {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+window.handleLogin = async function () {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      console.log("Login correcto");
-    })
-    .catch(error => alert(error.message));
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("✅ Login correcto");
+  } catch (error) {
+    alert("❌ " + error.code);
+  }
 };
 </script>
 </body>
