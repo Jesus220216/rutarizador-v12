@@ -10,13 +10,38 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// LOGIN
-window.login = async () => {
+// 🔘 BOTONES
+document.getElementById("loginBtn").onclick = login;
+document.getElementById("registerBtn").onclick = register;
 
-  console.log("click login");
+// 👁 MOSTRAR / OCULTAR PASSWORD
+window.togglePass = () => {
+  const input = document.getElementById("loginPassword");
+  input.type = input.type === "password" ? "text" : "password";
+};
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+// 📋 PEGAR REFERIDO
+window.copyRef = async () => {
+  try {
+    const text = await navigator.clipboard.readText();
+    document.getElementById("referralCode").value = text;
+  } catch {
+    alert("No se pudo pegar");
+  }
+};
+
+// 🔐 LOGIN
+async function login() {
+
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+
+  if (!email || !password) {
+    alert("Completa todos los campos");
+    return;
+  }
+
+  mostrarLoader(true);
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
@@ -24,14 +49,23 @@ window.login = async () => {
   } catch (e) {
     alert(e.message);
   }
-};
 
-// REGISTRO
-window.register = async () => {
+  mostrarLoader(false);
+}
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  const ref = document.getElementById("ref").value;
+// 🆕 REGISTRO
+async function register() {
+
+  const email = document.getElementById("loginEmail").value;
+  const password = document.getElementById("loginPassword").value;
+  const ref = document.getElementById("referralCode").value;
+
+  if (!email || !password) {
+    alert("Completa todos los campos");
+    return;
+  }
+
+  mostrarLoader(true);
 
   try {
 
@@ -50,9 +84,16 @@ window.register = async () => {
       createdAt: new Date()
     });
 
-    alert("Cuenta creada");
+    alert("Cuenta creada ✅");
 
   } catch (e) {
     alert(e.message);
   }
-};
+
+  mostrarLoader(false);
+}
+
+// 🔄 LOADER
+function mostrarLoader(show) {
+  document.getElementById("loader").style.display = show ? "block" : "none";
+}
