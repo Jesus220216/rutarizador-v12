@@ -7,183 +7,131 @@
 
 <style>
 body {
-    margin:0;
-    font-family:'Segoe UI';
-    background:#050814;
-    color:#fff;
-}
-
-/* CONTENEDOR */
-.container {
-    padding:20px;
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background: radial-gradient(circle at center, #0a0f1f, #050814);
+  color:#fff;
+  display:none;
 }
 
 /* TITULO */
-h1 {
-    color:#00e5ff;
+.title {
+  text-align:center;
+  color:#00e5ff;
+  text-shadow:0 0 15px #00e5ff;
 }
 
 /* GRID */
 .grid {
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
-    gap:15px;
-    margin-top:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px;
+  padding:20px;
 }
 
-/* CARD */
+/* CARDS */
 .card {
-    background:#0f172a;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 0 15px rgba(0,255,255,0.2);
+  background:rgba(0,0,0,0.4);
+  padding:20px;
+  border-radius:15px;
+  border:1px solid #00e5ff33;
+  box-shadow:0 0 15px #00e5ff33;
+  text-align:center;
 }
 
-/* VALORES */
-.value {
-    font-size:24px;
-    margin-top:10px;
+.full {
+  margin:20px;
 }
 
-/* BOTON */
+/* BOTONES */
 .btn {
-    margin-top:20px;
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    background:#00e5ff;
-    cursor:pointer;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  margin-top:10px;
+  width:100%;
+}
+
+.neon {
+  background:linear-gradient(45deg,#00e5ff,#00ff88);
+  color:#000;
+  font-weight:bold;
+  box-shadow:0 0 10px #00e5ff;
+}
+
+.danger {
+  background:red;
+  color:#fff;
 }
 
 /* INPUT */
 input {
-    width:100%;
-    padding:10px;
-    margin-top:10px;
-    border-radius:8px;
-    border:none;
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:none;
+  margin-top:10px;
 }
 </style>
+
 </head>
 
 <body>
 
-<div class="container">
+<h1 class="title">DASHBOARD</h1>
 
-<h1>DASHBOARD</h1>
-
-<!-- TARJETAS -->
 <div class="grid">
 
 <div class="card">
-    Saldo Total
-    <div class="value" id="saldo">$0</div>
+  <p>Saldo Total</p>
+  <h2 id="saldo">$0.00</h2>
 </div>
 
 <div class="card">
-    Ganancias Hoy
-    <div class="value" id="today">$0</div>
+  <p>Ganancias Hoy</p>
+  <h2 id="today">$0.00</h2>
 </div>
 
 <div class="card">
-    Referidos
-    <div class="value" id="refs">0</div>
+  <p>Retiros Pendientes</p>
+  <h2 id="retiros">0</h2>
 </div>
 
-</div>
-
-<!-- REFERIDOS -->
 <div class="card">
-    <h3>Tu link de referido</h3>
-    <input id="refLink">
-    <button class="btn" onclick="copyLink()">Copiar</button>
+  <p>Referidos Activos</p>
+  <h2 id="refs">0</h2>
 </div>
-
-<!-- ACCIONES -->
-<button class="btn" onclick="simular()">Simular ganancia</button>
 
 </div>
 
-<!-- FIREBASE -->
-<script type="module">
+<div class="card full">
+  <h3>Tu código de referido</h3>
+  <p id="myCode"></p>
+  <button onclick="copyMyRef()" class="btn neon">📋 Copiar link</button>
+</div>
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  updateDoc,
-  increment
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<div class="card full">
+  <h3>Ver anuncios</h3>
+  <button onclick="verAnuncio()" class="btn neon">Ganar $0.01</button>
+</div>
 
-import {
-  getAuth,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+<div class="card full">
+  <h3>Mini juego</h3>
+  <button onclick="miniJuego()" class="btn neon">Click y gana $0.02</button>
+</div>
 
+<div class="card full">
+  <h3>Retirar dinero</h3>
+  <input id="paypal" placeholder="Correo PayPal">
+  <button onclick="retirar()" class="btn neon">Solicitar retiro</button>
+</div>
 
-// 🔥 TU CONFIG (usa la misma que ya tienes)
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_DOMINIO",
-  projectId: "TU_PROJECT_ID"
-};
+<div style="padding:20px;">
+  <button onclick="logout()" class="btn danger">Cerrar sesión</button>
+</div>
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-
-
-// 🧠 CUANDO EL USUARIO ENTRA
-onAuthStateChanged(auth, async (user) => {
-
-    if (!user) {
-        window.location.href = "index.html";
-        return;
-    }
-
-    const ref = doc(db, "users", user.uid);
-    const snap = await getDoc(ref);
-
-    const data = snap.data();
-
-    // 💰 mostrar datos
-    document.getElementById("saldo").textContent = "$" + (data.earnings || 0);
-    document.getElementById("refs").textContent = data.refs || 0;
-    document.getElementById("today").textContent = "$" + (data.today || 0);
-
-    // 🔗 link referido
-    const link = window.location.origin + "/index.html?ref=" + data.referralCode;
-    document.getElementById("refLink").value = link;
-
-});
-
-
-// 📋 copiar link
-window.copyLink = () => {
-    const input = document.getElementById("refLink");
-    input.select();
-    document.execCommand("copy");
-    alert("Link copiado");
-};
-
-
-// 🎯 SIMULAR GANANCIA (prueba)
-window.simular = async () => {
-
-    const user = auth.currentUser;
-    const ref = doc(db, "users", user.uid);
-
-    await updateDoc(ref, {
-        earnings: increment(5),
-        today: increment(5)
-    });
-
-    location.reload();
-};
-
-</script>
+<script type="module" src="dashboard.js"></script>
 
 </body>
 </html>
-
