@@ -6,6 +6,41 @@
 <title>Rutartizador</title>
 
 <style>
+body::before {
+    content: "";
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 500px;
+    height: 500px;
+
+    background: url("img/fondo.png") no-repeat center;
+    background-size: contain;
+
+    transform: translate(-50%, -50%);
+    
+    opacity: 0.12;
+    filter: blur(2px);
+
+    z-index: -1;
+    pointer-events: none;
+
+    /* 🔥 ANIMACIÓN FLOTANTE */
+    animation: floatLogo 6s ease-in-out infinite;
+}
+
+/* 🎯 movimiento suave */
+@keyframes floatLogo {
+    0% {
+        transform: translate(-50%, -50%) translateY(0px);
+    }
+    50% {
+        transform: translate(-50%, -50%) translateY(-20px);
+    }
+    100% {
+        transform: translate(-50%, -50%) translateY(0px);
+    }
+}
 body {
     margin: 0;
     height: 100vh;
