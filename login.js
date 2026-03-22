@@ -1,68 +1,83 @@
-// 🔥 IMPORTS FIREBASE
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// 🔑 CONFIG
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
   authDomain: "rutarizador-v12.firebaseapp.com",
   projectId: "rutarizador-v12",
-  storageBucket: "rutarizador-v12.firebasestorage.app",
+  storageBucket: "rutarizador-v12.appspot.com",
   messagingSenderId: "928870753252",
   appId: "1:928870753252:web:f57cb32567e1a1138b1df1"
 };
 
-// 🚀 INIT
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// 🔐 LOGIN
+// LOGIN
 async function handleLogin() {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
+  const email = loginEmail.value;
+  const password = loginPassword.value;
 
   try {
     await signInWithEmailAndPassword(auth, email, password);
-    alert("✅ Login correcto");
-
-    // 👉 REDIRIGE
     window.location.href = "dashboard.html";
-
-  } catch (error) {
-    alert("❌ " + error.code);
+  } catch (e) {
+    alert(e.code);
   }
 }
 
-// 📝 REGISTER
+// REGISTER + REFERIDOS
 async function handleRegister() {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
+  const email = loginEmail.value;
+  const password = loginPassword.value;
+  const refInput = referralCode.value;
 
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCred.user;
 
-    await setDoc(doc(db, "users", userCredential.user.uid), {
-      email: email,
+    const myCode = user.uid.substring(0,6).toUpperCase();
+
+    let referredBy = null;
+
+    if (refInput) {
+      const snap = await getDocs(collection(db, "users"));
+      snap.forEach(d => {
+        if (d.data().referralCode === refInput) {
+          referredBy = d.id;
+        }
+      });
+    }
+
+    await setDoc(doc(db, "users", user.uid), {
+      email,
+      referralCode: myCode,
+      referredBy,
       createdAt: new Date()
     });
 
-    alert("✅ Usuario registrado");
-
-  } catch (error) {
-
-    if (error.code === "auth/email-already-in-use") {
-      alert("⚠️ Este correo ya existe");
-    } else {
-      alert("❌ " + error.code);
-    }
-
+    alert("Registrado");
+  } catch (e) {
+    alert(e.code);
   }
 }
 
-// 🔘 CONECTAR BOTONES
+// EVENTOS
 window.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("loginBtn").addEventListener("click", handleLogin);
-  document.getElementById("registerBtn").addEventListener("click", handleRegister);
+  loginBtn.onclick = handleLogin;
+  registerBtn.onclick = handleRegister;
 });
