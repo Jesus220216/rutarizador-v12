@@ -1,62 +1,43 @@
-// 🔥 IMPORTS
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { 
-  getAuth, 
-  signInWithEmailAndPassword, 
-  createUserWithEmailAndPassword 
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// 🔑 CONFIG (la tuya)
-const firebaseConfig = {
-  apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
-  authDomain: "rutarizador-v12.firebaseapp.com",
-  projectId: "rutarizador-v12",
-  storageBucket: "rutarizador-v12.firebasestorage.app",
-  messagingSenderId: "928870753252",
-  appId: "1:928870753252:web:f57cb32567e1a1138b1df1"
-};
+import {
+  getFirestore,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 🚀 INIT
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+const db = getFirestore();
 
-// 🔐 LOGIN
-async function handleLogin() {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
+registerBtn.addEventListener("click", async () => {
+
+  const email = loginEmail.value;
+  const password = loginPassword.value;
+  const refInput = referralCode.value;
 
   try {
-    await signInWithEmailAndPassword(auth, email, password);
-    alert("✅ Login correcto");
 
-    // 👉 ir a dashboard
-    window.location.href = "dashboard.html";
+    // 🔐 crear usuario
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCred.user;
+
+    // 🎯 generar código único
+    const myCode = Math.random().toString(36).substring(2,8).toUpperCase();
+
+    // 💾 GUARDAR EN FIRESTORE (LO QUE TE FALTA)
+    await setDoc(doc(db, "users", user.uid), {
+      email: email,
+      referralCode: myCode,
+      referredBy: refInput || null,
+      earnings: 0,
+      today: 0,
+      refs: 0,
+      createdAt: new Date()
+    });
+
+    alert("Registrado correctamente");
 
   } catch (error) {
-    alert("❌ " + error.code);
+    alert(error.message);
   }
-}
 
-// 📝 REGISTER
-async function handleRegister() {
-  const email = document.getElementById("loginEmail").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-
-  try {
-    await createUserWithEmailAndPassword(auth, email, password);
-    alert("✅ Usuario registrado");
-
-  } catch (error) {
-
-    if (error.code === "auth/email-already-in-use") {
-      alert("⚠️ Este correo ya existe");
-    } else {
-      alert("❌ " + error.code);
-    }
-
-  }
-}
-
-// 🔘 BOTONES
-document.getElementById("loginBtn").addEventListener("click", handleLogin);
-document.getElementById("registerBtn").addEventListener("click", handleRegister);
+});
