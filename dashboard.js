@@ -84,14 +84,26 @@ window.verAnuncio = async () => {
 // 🎮 MINI JUEGO
 window.miniJuego = async () => {
 
+  if (!userRef) {
+    alert("Espera, cargando datos...");
+    return;
+  }
+
   if (!puedeClick()) return;
 
-  await updateDoc(userRef, {
-    earnings: increment(0.02),
-    today: increment(0.02)
-  });
+  try {
+    await updateDoc(userRef, {
+      earnings: increment(0.02),
+      today: increment(0.02)
+    });
 
-  alert("Ganaste $0.02 🎉");
+    alert("Ganaste $0.02 🎉");
+
+  } catch (err) {
+    console.error(err);
+    alert("Error en el juego");
+  }
+
 };
 
 // 💳 RETIRO (SIN paypal.js)
