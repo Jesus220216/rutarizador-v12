@@ -6,7 +6,6 @@
 <title>Rutartizador Login</title>
 
 <style>
-/* (mantengo tu diseño mejorado) */
 body {
     margin: 0;
     height: 100vh;
@@ -26,12 +25,36 @@ body {
     border: 1px solid rgba(0,255,255,0.2);
     box-shadow: 0 0 25px rgba(0,255,255,0.2);
     text-align: center;
+    animation: glow 3s infinite alternate;
 }
 
-.icon { font-size: 32px; color: #ffcc00; }
-h1 { color: #00e5ff; }
-.version { color: #c084fc; }
-.subtitle { font-size: 12px; color: #aaa; margin-bottom: 20px; }
+@keyframes glow {
+    from { box-shadow: 0 0 15px rgba(0,255,255,0.2); }
+    to   { box-shadow: 0 0 35px rgba(0,255,255,0.6); }
+}
+
+.icon {
+    font-size: 32px;
+    color: #ffcc00;
+    margin-bottom: 10px;
+}
+
+h1 {
+    margin: 5px 0;
+    color: #00e5ff;
+    letter-spacing: 2px;
+}
+
+.version {
+    color: #c084fc;
+    font-weight: bold;
+}
+
+.subtitle {
+    font-size: 12px;
+    color: #aaa;
+    margin-bottom: 20px;
+}
 
 label {
     display: block;
@@ -49,6 +72,12 @@ input {
     border: 1px solid #00e5ff40;
     background: #020617;
     color: #fff;
+    outline: none;
+}
+
+input:focus {
+    border-color: #00e5ff;
+    box-shadow: 0 0 10px #00e5ff80;
 }
 
 .btn {
@@ -57,17 +86,22 @@ input {
     padding: 13px;
     border: none;
     border-radius: 8px;
-    background: #facc15;
+    background: linear-gradient(90deg, #facc15, #fde047);
+    color: #000;
     font-weight: bold;
     cursor: pointer;
+    transition: 0.3s;
 }
 
-.link {
-    margin-top: 10px;
-    display: block;
-    font-size: 12px;
-    color: #ccc;
-    cursor: pointer;
+.btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #facc15;
+}
+
+.footer {
+    margin-top: 15px;
+    font-size: 10px;
+    color: #888;
 }
 </style>
 </head>
@@ -81,23 +115,27 @@ input {
     <div class="version">V1.2 ADVANCED</div>
     <div class="subtitle">Sistema Avanzado de Ganancias</div>
 
-    <!-- 🔑 IMPORTANTE: IDs deben coincidir con tu JS -->
+    <!-- 🔑 IMPORTANTE: IDs conectados -->
     <label>USUARIO</label>
     <input type="email" id="loginEmail" placeholder="correo@ejemplo.com">
 
     <label>CONTRASEÑA</label>
     <input type="password" id="loginPassword" placeholder="••••••••">
 
+    <label>CÓDIGO DE REFERIDO</label>
+    <input type="text" id="referralCode" placeholder="Opcional">
+
     <button id="loginBtn" class="btn">ENTRAR</button>
+    <button id="registerBtn" class="btn">REGISTRARSE</button>
 
-    <button id="registerBtn" class="btn" style="margin-top:10px;background:#22c55e;">
-        REGISTRARSE
-    </button>
-
+    <div class="footer">
+        Sistema seguro con Firebase 🔐
+    </div>
 </div>
 
-<!-- 🔥 IMPORTAR TU JS -->
+<!-- 🔥 Scripts -->
 <script type="module" src="login.js"></script>
+<script type="module" src="authCheck.js"></script>
 
 </body>
 </html>
