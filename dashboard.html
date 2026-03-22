@@ -135,13 +135,17 @@ const auth = getAuth(app);
 
 
 // 🧠 CUANDO EL USUARIO ENTRA
-onAuthStateChanged(auth, async (user) => {
+onAuthStateChanged(auth, (user) => {
 
-    if (!user) {
+    if (user) {
+        // 🔥 MOSTRAR DASHBOARD
+        document.body.style.display = "block";
+    } else {
+        // ❌ SIN SESIÓN → LOGIN
         window.location.href = "index.html";
-        return;
     }
 
+});
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
 
