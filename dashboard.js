@@ -13,11 +13,18 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 let userRef;
+let cargado = false;
 
+// 🔐 CONTROL DE SESIÓN (ANTI BUG)
 onAuthStateChanged(auth, async (user) => {
 
+  if (cargado) return;
+  cargado = true;
+
   if (!user) {
-    window.location.href = "index.html";
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 300);
     return;
   }
 
@@ -27,14 +34,16 @@ onAuthStateChanged(auth, async (user) => {
   const snap = await getDoc(userRef);
   const data = snap.data();
 
+  if (!data) return;
+
   document.getElementById("saldo").textContent = "$" + data.earnings.toFixed(2);
   document.getElementById("today").textContent = "$" + data.today.toFixed(2);
-  document.getElementById("refs").textContent = data.refs;
+  document.getElementById("refs").textContent = data.refs || 0;
   document.getElementById("myCode").textContent = data.referralCode;
 
 });
 
-// 📺 ANUNCIO
+// 📺 GANAR POR ANUNCIO
 window.verAnuncio = async () => {
   await updateDoc(userRef, {
     earnings: increment(0.01),
@@ -49,7 +58,7 @@ window.miniJuego = async () => {
     earnings: increment(0.02),
     today: increment(0.02)
   });
-  alert("Ganaste $0.02");
+  alert("Ganaste $0.02 🎉");
   location.reload();
 };
 
@@ -60,36 +69,22 @@ window.retirar = () => {
 
 // 📋 COPIAR REFERIDO
 window.copyMyRef = () => {
+  const code = document.getElementById("myCode").textContent;
+
   navigator.clipboard.writeText(
-    window.location.origin + "?ref=" +
-    document.getElementById("myCode").textContent
+    window.location.origin + "?ref=" + code
   );
-  alert("Link copiado");
+
+  alert("Link copiado 🚀");
 };
 
-// 🚪 LOGOUT
+// 🚪 LOGOUT (FUNCIONANDO)
 window.logout = async () => {
-  await signOut(auth);
-  window.location.href = "index.html";
-};
-
-// 🔴 LOGOUT FIX DEFINITIVO
-setTimeout(() => {
-  const btn = document.getElementById("logoutBtn");
-
-  if (btn) {
-    btn.addEventListener("click", async () => {
-      console.log("Cerrando sesión...");
-
-      try {
-        await signOut(auth);
-        window.location.href = "index.html";
-      } catch (err) {
-        console.error(err);
-        alert("Error al cerrar sesión");
-      }
-    });
-  } else {
-    console.error("No se encontró el botón logout");
+  try {
+    await signOut(auth);
+    window.location.href = "index.html";
+  } catch (err) {
+    console.error(err);
+    alert("Error al cerrar sesión");
   }
-}, 500);
+};
