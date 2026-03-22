@@ -47,7 +47,9 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  document.body.style.display = "block";
+document.body.style.display = "block";
+document.body.style.pointerEvents = "auto";
+document.body.style.overflow = "auto";
 
   userRef = doc(db, "users", user.uid);
   const snap = await getDoc(userRef);
