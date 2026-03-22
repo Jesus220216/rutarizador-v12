@@ -12,10 +12,6 @@ import {
   increment
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// 🔥 IMPORTS EXTERNOS
-import { mostrarAnuncio } from "./ads.js";
-import { enviarPago } from "./paypal.js";
-
 // 🧠 ANTI FRAUDE
 let lastClick = 0;
 
@@ -47,29 +43,36 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-document.body.style.display = "block";
-document.body.style.pointerEvents = "auto";
-document.body.style.overflow = "auto";
+  document.body.style.display = "block";
 
-  userRef = doc(db, "users", user.uid);
-  const snap = await getDoc(userRef);
-  const data = snap.data();
+  try {
+    userRef = doc(db, "users", user.uid);
+    const snap = await getDoc(userRef);
 
-  if (!data) return;
+    if (!snap.exists()) {
+      console.error("No existe el usuario en Firestore");
+      return;
+    }
 
-  document.getElementById("saldo").textContent = "$" + data.earnings.toFixed(2);
-  document.getElementById("today").textContent = "$" + data.today.toFixed(2);
-  document.getElementById("refs").textContent = data.refs || 0;
-  document.getElementById("myCode").textContent = data.referralCode;
+    const data = snap.data();
+
+    document.getElementById("saldo").textContent = "$" + data.earnings.toFixed(2);
+    document.getElementById("today").textContent = "$" + data.today.toFixed(2);
+    document.getElementById("refs").textContent = data.refs || 0;
+    document.getElementById("myCode").textContent = data.referralCode;
+
+  } catch (err) {
+    console.error("Error cargando datos:", err);
+  }
 
 });
 
-// 📺 ANUNCIO (PROTEGIDO)
+// 📺 ANUNCIO (SIN ads.js)
 window.verAnuncio = async () => {
 
   if (!puedeClick()) return;
 
-  mostrarAnuncio();
+  alert("Anuncio demo ✅");
 
   await updateDoc(userRef, {
     earnings: increment(0.02),
@@ -91,7 +94,7 @@ window.miniJuego = async () => {
   alert("Ganaste $0.02 🎉");
 };
 
-// 💳 RETIRO
+// 💳 RETIRO (SIN paypal.js)
 window.retirar = async () => {
 
   const email = document.getElementById("paypal").value;
@@ -109,15 +112,7 @@ window.retirar = async () => {
     return;
   }
 
-  alert("Procesando pago...");
-
-  await enviarPago(email, data.earnings);
-
-  await updateDoc(userRef, {
-    earnings: 0
-  });
-
-  alert("Pago enviado 💸");
+  alert("Retiro simulado 💸");
 };
 
 // 📋 COPIAR REFERIDO
@@ -131,7 +126,7 @@ window.copyMyRef = () => {
   alert("Link copiado 🚀");
 };
 
-// 🚪 LOGOUT
+// 🚪 LOGOUT (AHORA SÍ FUNCIONA)
 window.logout = async () => {
   try {
     await signOut(auth);
@@ -140,3 +135,4 @@ window.logout = async () => {
     console.error(err);
     alert("Error al cerrar sesión");
   }
+};
