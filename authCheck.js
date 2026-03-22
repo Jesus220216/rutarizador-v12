@@ -1,15 +1,56 @@
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+import { auth, db } from "./firebase.js";
 
-const auth = getAuth();
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
-onAuthStateChanged(auth, (user) => {
+import {
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-    if (user) {
-        // ✅ usuario logueado
-        document.body.style.display = "block";
-    } else {
-        // ❌ no logueado
-        window.location.href = "index.html";
-    }
+// LOGIN
+window.login = async () => {
 
-});;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    window.location.href = "dashboard.html";
+  } catch (e) {
+    alert(e.message);
+  }
+};
+
+// REGISTRO
+window.register = async () => {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const ref = document.getElementById("ref").value;
+
+  try {
+
+    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+    const user = userCred.user;
+
+    const code = Math.random().toString(36).substring(2,8).toUpperCase();
+
+    await setDoc(doc(db, "users", user.uid), {
+      email,
+      referralCode: code,
+      referredBy: ref || null,
+      earnings: 0,
+      today: 0,
+      refs: 0,
+      createdAt: new Date()
+    });
+
+    alert("Cuenta creada");
+
+  } catch (e) {
+    alert(e.message);
+  }
+};
