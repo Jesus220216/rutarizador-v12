@@ -140,4 +140,3 @@ window.logout = async () => {
     console.error(err);
     alert("Error al cerrar sesión");
   }
-};
