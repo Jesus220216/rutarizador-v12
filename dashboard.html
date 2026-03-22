@@ -11,17 +11,19 @@ body {
     font-family:'Segoe UI';
     background:#050814;
     color:#fff;
-    display:none;
 }
 
+/* CONTENEDOR */
 .container {
     padding:20px;
 }
 
+/* TITULO */
 h1 {
     color:#00e5ff;
 }
 
+/* GRID */
 .grid {
     display:grid;
     grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
@@ -29,27 +31,37 @@ h1 {
     margin-top:20px;
 }
 
+/* CARD */
 .card {
     background:#0f172a;
     padding:20px;
     border-radius:12px;
     box-shadow:0 0 15px rgba(0,255,255,0.2);
-    text-align:center;
 }
 
+/* VALORES */
 .value {
     font-size:24px;
     margin-top:10px;
 }
 
+/* BOTON */
 .btn {
-    margin-top:15px;
+    margin-top:20px;
     padding:12px;
     border:none;
     border-radius:8px;
-    background:linear-gradient(45deg,#00e5ff,#00ff99);
+    background:#00e5ff;
     cursor:pointer;
-    font-weight:bold;
+}
+
+/* INPUT */
+input {
+    width:100%;
+    padding:10px;
+    margin-top:10px;
+    border-radius:8px;
+    border:none;
 }
 </style>
 </head>
@@ -58,7 +70,7 @@ h1 {
 
 <div class="container">
 
-<h1>💰 DASHBOARD</h1>
+<h1>DASHBOARD</h1>
 
 <!-- TARJETAS -->
 <div class="grid">
@@ -69,7 +81,7 @@ h1 {
 </div>
 
 <div class="card">
-    Hoy
+    Ganancias Hoy
     <div class="value" id="today">$0</div>
 </div>
 
@@ -80,73 +92,49 @@ h1 {
 
 </div>
 
-<!-- ACCIONES -->
-<div class="grid">
-
+<!-- REFERIDOS -->
 <div class="card">
-    🎥 Ver Video
-    <button class="btn" onclick="ganar(2)">Ganar $2</button>
-</div>
-
-<div class="card">
-    📺 Ver Anuncio
-    <button class="btn" onclick="ganar(1)">Ganar $1</button>
-</div>
-
-<div class="card">
-    📋 Encuesta
-    <button class="btn" onclick="ganar(5)">Ganar $5</button>
-</div>
-
-<div class="card">
-    🎮 Mini Juego
-    <button class="btn" onclick="ganar(3)">Ganar $3</button>
-</div>
-
-</div>
-
-<!-- REFERIDO -->
-<div class="card">
-    <h3>Tu link</h3>
+    <h3>Tu link de referido</h3>
     <input id="refLink">
-    <button class="btn" onclick="copiar()">Copiar</button>
+    <button class="btn" onclick="copyLink()">Copiar</button>
 </div>
 
-<!-- RETIRO -->
-<div class="card">
-    <button class="btn" onclick="retirar()">💸 Retirar a PayPal</button>
-</div>
+<!-- ACCIONES -->
+<button class="btn" onclick="simular()">Simular ganancia</button>
 
 </div>
 
+<!-- FIREBASE -->
 <script type="module">
-<script type="module" src="authCheck.js"></script> 
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore,
   doc,
   getDoc,
   updateDoc,
   increment
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 import {
   getAuth,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
+
+// 🔥 TU CONFIG (usa la misma que ya tienes)
 const firebaseConfig = {
- apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
-    authDomain: "rutarizador-v12.firebaseapp.com",
-    projectId: "rutarizador-v12",
+  apiKey: "TU_API_KEY",
+  authDomain: "TU_DOMINIO",
+  projectId: "TU_PROJECT_ID"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// 🔐 SESIÓN
+
+// 🧠 CUANDO EL USUARIO ENTRA
 onAuthStateChanged(auth, async (user) => {
 
     if (!user) {
@@ -154,46 +142,44 @@ onAuthStateChanged(auth, async (user) => {
         return;
     }
 
-    document.body.style.display = "block";
-
     const ref = doc(db, "users", user.uid);
     const snap = await getDoc(ref);
-    const data = snap.data() || {};
 
+    const data = snap.data();
+
+    // 💰 mostrar datos
     document.getElementById("saldo").textContent = "$" + (data.earnings || 0);
-    document.getElementById("today").textContent = "$" + (data.today || 0);
     document.getElementById("refs").textContent = data.refs || 0;
+    document.getElementById("today").textContent = "$" + (data.today || 0);
 
-    document.getElementById("refLink").value =
-      window.location.origin + "/index.html?ref=" + (data.referralCode || "");
+    // 🔗 link referido
+    const link = window.location.origin + "/index.html?ref=" + data.referralCode;
+    document.getElementById("refLink").value = link;
 
 });
 
-// 💰 GANAR DINERO
-window.ganar = async (monto) => {
+
+// 📋 copiar link
+window.copyLink = () => {
+    const input = document.getElementById("refLink");
+    input.select();
+    document.execCommand("copy");
+    alert("Link copiado");
+};
+
+
+// 🎯 SIMULAR GANANCIA (prueba)
+window.simular = async () => {
 
     const user = auth.currentUser;
     const ref = doc(db, "users", user.uid);
 
     await updateDoc(ref, {
-        earnings: increment(monto),
-        today: increment(monto)
+        earnings: increment(5),
+        today: increment(5)
     });
 
     location.reload();
-};
-
-// 📋 COPIAR
-window.copiar = () => {
-    const input = document.getElementById("refLink");
-    input.select();
-    document.execCommand("copy");
-    alert("Copiado");
-};
-
-// 💸 RETIRO
-window.retirar = () => {
-    alert("Solicitud enviada a PayPal 💸");
 };
 
 </script>
