@@ -1,65 +1,68 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Login - Rutarizador V12</title>
-</head>
-<body>
+// 🔥 IMPORTS FIREBASE
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  <h2>Iniciar Sesión</h2>
+// 🔑 CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
+  authDomain: "rutarizador-v12.firebaseapp.com",
+  projectId: "rutarizador-v12",
+  storageBucket: "rutarizador-v12.firebasestorage.app",
+  messagingSenderId: "928870753252",
+  appId: "1:928870753252:web:f57cb32567e1a1138b1df1"
+};
 
-  <input id="user" type="text" placeholder="Usuario"><br><br>
-  <input id="pass" type="password" placeholder="Contraseña"><br><br>
-  <input id="key" type="text" placeholder="Key"><br><br>
+// 🚀 INIT
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-  <button id="btnLogin">Login</button>
+// 🔐 LOGIN
+async function handleLogin() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
 
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const btnLogin = document.querySelector("#btnLogin");
-      btnLogin.addEventListener("click", login);
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    alert("✅ Login correcto");
+
+    // 👉 REDIRIGE
+    window.location.href = "dashboard.html";
+
+  } catch (error) {
+    alert("❌ " + error.code);
+  }
+}
+
+// 📝 REGISTER
+async function handleRegister() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+
+    await setDoc(doc(db, "users", userCredential.user.uid), {
+      email: email,
+      createdAt: new Date()
     });
 
-    async function login() {
-      const user = document.querySelector("#user").value;
-      const pass = document.querySelector("#pass").value;
-      const key = document.querySelector("#key").value;
+    alert("✅ Usuario registrado");
 
-      if (!user || !pass || !key) {
-        alert("Completa todos los campos");
-        return;
-      }
+  } catch (error) {
 
-      try {
-        const res = await fetch("/api/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ user, pass, key })
-        });
-
-        if (!res.ok) {
-          throw new Error("Error en el servidor");
-        }
-
-        const data = await res.json();
-        console.log("Respuesta:", data);
-
-        if (data.success) {
-          alert("Login exitoso ✅");
-          localStorage.setItem("token", data.token);
-          window.location.href = "/dashboard";
-        } else {
-          alert(data.message);
-        }
-
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Error de conexión con el servidor ❌");
-      }
+    if (error.code === "auth/email-already-in-use") {
+      alert("⚠️ Este correo ya existe");
+    } else {
+      alert("❌ " + error.code);
     }
-  </script>
 
-</body>
-</html>
+  }
+}
+
+// 🔘 CONECTAR BOTONES
+window.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("loginBtn").addEventListener("click", handleLogin);
+  document.getElementById("registerBtn").addEventListener("click", handleRegister);
+});
