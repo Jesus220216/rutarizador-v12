@@ -24,15 +24,15 @@ registerBtn.addEventListener("click", async () => {
     const myCode = Math.random().toString(36).substring(2,8).toUpperCase();
 
     // 💾 GUARDAR EN FIRESTORE (LO QUE TE FALTA)
-    await setDoc(doc(db, "users", user.uid), {
-      email: email,
-      referralCode: myCode,
-      referredBy: refInput || null,
-      earnings: 0,
-      today: 0,
-      refs: 0,
-      createdAt: new Date()
-    });
+   await setDoc(doc(db, "users", user.uid), {
+  email: email,
+  referralCode: Math.random().toString(36).substring(2,8).toUpperCase(),
+  referredBy: refInput || null,
+  earnings: 0,
+  today: 0,
+  refs: 0,
+  createdAt: new Date()
+});
 
     alert("Registrado correctamente");
 
