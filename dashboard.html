@@ -11,6 +11,7 @@ body {
     font-family:'Segoe UI';
     background:#050814;
     color:#fff;
+    display: none;
 }
 
 /* CONTENEDOR */
@@ -107,26 +108,26 @@ input {
 <!-- FIREBASE -->
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
 import {
   getFirestore,
   doc,
   getDoc,
   updateDoc,
   increment
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
 import {
   getAuth,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
 
 
-// 🔥 TU CONFIG (usa la misma que ya tienes)
+// 🔥 TU CONFIG REAL
 const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_DOMINIO",
-  projectId: "TU_PROJECT_ID"
+  apiKey: "AIzaSyD1w_66STxqf5iMVneB8DgLnpFwS8RGy3g",
+  authDomain: "rutarizador-v12.firebaseapp.com",
+  projectId: "rutarizador-v12",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -134,31 +135,34 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 
-// 🧠 CUANDO EL USUARIO ENTRA
-onAuthStateChanged(auth, (user) => {
+// 🧠 CONTROL DE SESIÓN + CARGA DE DATOS
+onAuthStateChanged(auth, async (user) => {
 
-    if (user) {
-        // 🔥 MOSTRAR DASHBOARD
-        document.body.style.display = "block";
-    } else {
-        // ❌ SIN SESIÓN → LOGIN
+    if (!user) {
         window.location.href = "index.html";
+        return;
     }
 
-});
-    const ref = doc(db, "users", user.uid);
-    const snap = await getDoc(ref);
+    // 🔥 mostrar dashboard
+    document.body.style.display = "block";
 
-    const data = snap.data();
+    try {
+        const ref = doc(db, "users", user.uid);
+        const snap = await getDoc(ref);
+        const data = snap.data() || {};
 
-    // 💰 mostrar datos
-    document.getElementById("saldo").textContent = "$" + (data.earnings || 0);
-    document.getElementById("refs").textContent = data.refs || 0;
-    document.getElementById("today").textContent = "$" + (data.today || 0);
+        // 💰 datos
+        document.getElementById("saldo").textContent = "$" + (data.earnings || 0);
+        document.getElementById("refs").textContent = data.refs || 0;
+        document.getElementById("today").textContent = "$" + (data.today || 0);
 
-    // 🔗 link referido
-    const link = window.location.origin + "/index.html?ref=" + data.referralCode;
-    document.getElementById("refLink").value = link;
+        // 🔗 link referido
+        const link = window.location.origin + "/index.html?ref=" + (data.referralCode || "");
+        document.getElementById("refLink").value = link;
+
+    } catch (error) {
+        console.error(error);
+    }
 
 });
 
@@ -172,7 +176,7 @@ window.copyLink = () => {
 };
 
 
-// 🎯 SIMULAR GANANCIA (prueba)
+// 🎯 SIMULAR GANANCIA
 window.simular = async () => {
 
     const user = auth.currentUser;
