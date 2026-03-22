@@ -1608,18 +1608,31 @@ const db = getFirestore(app);
 
 
 // 🔐 LOGIN
-window.handleRegister = async function () {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
+async function handleRegister() {
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
 
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-    await setDoc(doc(db, "users", user.uid), {
-      email: email,
-      createdAt: new Date()
-    });
+        await setDoc(doc(db, "users", user.uid), {
+            email: email,
+            createdAt: new Date()
+        });
+
+        alert("✅ Usuario registrado correctamente");
+
+    } catch (error) {
+
+        if (error.code === "auth/email-already-in-use") {
+            alert("⚠️ Este correo ya existe. Inicia sesión.");
+        } else {
+            alert("❌ " + error.message);
+        }
+
+    }
+}
 
     alert("✅ Usuario registrado");
   } catch (error) {
