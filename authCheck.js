@@ -4,14 +4,9 @@ const auth = getAuth();
 
 onAuthStateChanged(auth, (user) => {
 
-  if (user) {
-    if (location.pathname.includes("index.html")) {
-      window.location.href = "dashboard.html";
+    // 🧠 esperar respuesta real
+    if (user === null) {
+        window.location.href = "index.html";
     }
-  } else {
-    if (location.pathname.includes("dashboard.html")) {
-      window.location.href = "index.html";
-    }
-  }
 
 });
