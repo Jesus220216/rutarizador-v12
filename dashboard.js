@@ -14,7 +14,6 @@ import {
 
 let userRef;
 
-// 🔐 CONTROL DE SESIÓN
 onAuthStateChanged(auth, async (user) => {
 
   if (!user) {
@@ -28,22 +27,14 @@ onAuthStateChanged(auth, async (user) => {
   const snap = await getDoc(userRef);
   const data = snap.data();
 
-  if (!data) return;
-
   document.getElementById("saldo").textContent = "$" + data.earnings.toFixed(2);
   document.getElementById("today").textContent = "$" + data.today.toFixed(2);
-  document.getElementById("refs").textContent = data.refs || 0;
+  document.getElementById("refs").textContent = data.refs;
   document.getElementById("myCode").textContent = data.referralCode;
-
-  // 🔴 LOGOUT BOTÓN (FIX DEFINITIVO)
-  document.getElementById("logoutBtn").onclick = async () => {
-    await signOut(auth);
-    window.location.href = "index.html";
-  };
 
 });
 
-// 📺 GANAR POR ANUNCIO
+// 📺 ANUNCIO
 window.verAnuncio = async () => {
   await updateDoc(userRef, {
     earnings: increment(0.01),
@@ -58,7 +49,7 @@ window.miniJuego = async () => {
     earnings: increment(0.02),
     today: increment(0.02)
   });
-  alert("Ganaste $0.02 🎉");
+  alert("Ganaste $0.02");
   location.reload();
 };
 
@@ -69,11 +60,36 @@ window.retirar = () => {
 
 // 📋 COPIAR REFERIDO
 window.copyMyRef = () => {
-  const code = document.getElementById("myCode").textContent;
-
   navigator.clipboard.writeText(
-    window.location.origin + "?ref=" + code
+    window.location.origin + "?ref=" +
+    document.getElementById("myCode").textContent
   );
-
-  alert("Link copiado 🚀");
+  alert("Link copiado");
 };
+
+// 🚪 LOGOUT
+window.logout = async () => {
+  await signOut(auth);
+  window.location.href = "index.html";
+};
+
+// 🔴 LOGOUT FIX DEFINITIVO
+setTimeout(() => {
+  const btn = document.getElementById("logoutBtn");
+
+  if (btn) {
+    btn.addEventListener("click", async () => {
+      console.log("Cerrando sesión...");
+
+      try {
+        await signOut(auth);
+        window.location.href = "index.html";
+      } catch (err) {
+        console.error(err);
+        alert("Error al cerrar sesión");
+      }
+    });
+  } else {
+    console.error("No se encontró el botón logout");
+  }
+}, 500);
