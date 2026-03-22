@@ -10,11 +10,18 @@ import {
   setDoc
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// 🔘 BOTONES
-document.getElementById("loginBtn").onclick = login;
-document.getElementById("registerBtn").onclick = register;
+document.addEventListener("DOMContentLoaded", () => {
 
-// 👁 MOSTRAR / OCULTAR PASSWORD
+  const loginBtn = document.getElementById("loginBtn");
+  const registerBtn = document.getElementById("registerBtn");
+
+  // 🔘 BOTONES
+  loginBtn.onclick = login;
+  registerBtn.onclick = register;
+
+});
+
+// 👁 PASSWORD
 window.togglePass = () => {
   const input = document.getElementById("loginPassword");
   input.type = input.type === "password" ? "text" : "password";
